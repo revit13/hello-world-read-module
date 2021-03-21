@@ -1,0 +1,35 @@
+  
+apiVersion: app.m4d.ibm.com/v1alpha1
+kind: M4DModule
+metadata:
+  name: hello-world-read-module
+  labels:
+    name: hello-world-read-module
+    version: 0.0.1  # semantic version
+  namespace: m4d-system
+spec:
+  chart:
+    name: ghcr.io/mesh-for-data/hello-world-read-module-chart:latest
+    values:
+      image.tag: latest
+  flows:
+    - read
+  capabilities:
+    credentials-managed-by: secret-provider
+    api:
+      protocol: s3
+      dataformat:
+    supportedInterfaces:
+    - flow: read
+      source:
+        protocol: s3
+        dataformat: parquet
+    - flow: read
+      source:
+        protocol: s3
+        dataformat: csv
+  statusIndicators:
+    - kind: hello-world-read-module
+      successCondition: status.status == SUCCEEDED
+      failureCondition: status.status == FAILED
+      errorMessage: status.error
