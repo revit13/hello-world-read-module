@@ -5,9 +5,11 @@
 global:
   environment: []
 
+replicaCount: 1
+
 ## Module image
 image: 
-  repository: ghcr.io/mesh-for-data/hello-world-read-module 
+  repository: ghcr.io/mohammad-nassar10/hello-world-read-module 
   tag: latest
   pullPolicy: IfNotPresent
   pullSecret: null
@@ -22,12 +24,12 @@ read:
     connection:
       name: s3
       s3:
-        bucket: m4d-test-bucket
-        endpoint: s3.eu-gb.cloud-object-storage.appdomain.cloud
-        object_key: test1.parquet
+        bucket: cloud-object-storage-l4-cos-standard-7vz
+        endpoint: s3.us-east.cloud-object-storage.appdomain.cloud
+        object_key: data.csv
       type: 2
-      credentialLocation: htttp://test/test
-      format: csv
+    credentialLocation: htttp://test/test
+    format: csv
 
 nameOverride: ""
 fullnameOverride: ""

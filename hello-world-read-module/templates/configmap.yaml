@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "hello-world-read-module.fullname" . }}-config
+  name: {{ include "hello-world-read-module.fullname" . }}
 data:
   conf.yaml: |- 
 {{- if .Values.config_override }}
