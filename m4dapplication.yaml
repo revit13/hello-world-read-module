@@ -1,19 +1,19 @@
 apiVersion: app.m4d.ibm.com/v1alpha1
 kind: M4DApplication
 metadata:
-  name: hello-world-module-test
+  name: hello-world-read-module-test
 spec:
   selector:
    workloadSelector:
-     matchLabels: {}
+     matchLabels: {
+       app: notebook
+     }
   appInfo:
     purpose: Fraud Detection
     role: Data Owner
   data:
-    - dataSetID: "{\"ServerName\":\"cocoMDS3\",\"AssetGuid\":\"ASSET_ID\"}" 
+    - dataSetID: "{\"ServerName\":\"mds1\",\"AssetGuid\":\"806d357c-86da-422a-890e-7ac3998a7f1d\"}"
       requirements:
-        copy:
-          required: true
         interface:
-          protocol: m4d-arrow-flight
-          dataformat: parquet
+          protocol: s3
+          dataformat: csv

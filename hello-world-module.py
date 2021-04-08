@@ -1,31 +1,53 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+"""
+Very simple HTTP server in python for logging requests
+Usage::
+    ./hello-world-read-module.py [<port>]
+"""
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import logging
 
 import os
 import yaml
 
+class S(BaseHTTPRequestHandler):
+    def _set_response(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
 
-def main():
-    print("\nHello World Module!")
+    def do_GET(self):
+        logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
+        self._set_response()
+        self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
 
-    # Read config map values from volume mount
-    with open('/hello-world-read-module/conf.yaml', 'r') as stream:
-        content = yaml.safe_load(stream)
-        for key,val in content.items():
-            if "data" in key:
-                data = val[0]
-                connectionName = data["connection.name"]
-                connectionFormat = data["connection.format"]
-                connectionCred = data["connection.credentialLocation"]
-                s3Bucket = data["s3.bucket"]
-                s3Endpoint = data["s3.endpoint"]
+'''
+    def do_POST(self):
+        content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
+        post_data = self.rfile.read(content_length) # <--- Gets the data itself
+        logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
+                str(self.path), str(self.headers), post_data.decode('utf-8'))
 
-    print("\nConnection name is " + connectionName)
-    print("\nConnection format is " + connectionFormat)
-    print("\nConnection credential location is " + connectionCred)
-    print("\nS3 bucket is " + s3Bucket)
-    print("\nS3 endpoint is " + s3Endpoint)
-    print ("\nREAD SUCCEEDED")
+        self._set_response()
+        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+'''
+def run(server_class=HTTPServer, handler_class=S, port=8080):
+    logging.basicConfig(level=logging.INFO)
+    server_address = ('', port)
+    httpd = server_class(server_address, handler_class)
+    logging.info('Starting httpd...\n')
+    print("\nHello World Read Module!")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
+    logging.info('Stopping httpd...\n')
 
+if __name__ == '__main__':
+    from sys import argv
 
-if __name__ == "__main__":
-    main()
+    if len(argv) == 2:
+        run(port=int(argv[1]))
+    else:
+        run()

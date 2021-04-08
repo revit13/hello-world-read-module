@@ -1,11 +1,11 @@
-export DOCKER_USERNAME ?= eletonia
-export DOCKER_PASSWORD ?= 
+export DOCKER_USERNAME ?= Mohammad-nassar10
+export DOCKER_PASSWORD ?=
 export DOCKER_HOSTNAME ?= ghcr.io
-export DOCKER_NAMESPACE ?= mesh-for-data
+export DOCKER_NAMESPACE ?= mohammad-nassar10
 export DOCKER_TAGNAME ?= latest
 
-DOCKER_IMG_NAME ?= hello-world-module
-DOCKER_CHART_IMG_NAME ?= hello-world-module-chart
+DOCKER_IMG_NAME ?= hello-world-read-module
+DOCKER_CHART_IMG_NAME ?= hello-world-read-module-chart
 DOCKER_FILE ?= Dockerfile
 DOCKER_CONTEXT ?= .
 
@@ -50,7 +50,7 @@ endif
 .PHONY: helm-verify
 helm-verify: 
 	helm lint ${CHART}
-	helm install --dry-run ${HELM_RELEASE} ${CHART} ${HELM_VALUES}
+	helm install ${HELM_RELEASE} ${CHART} ${HELM_VALUES}
 
 .PHONY: helm-uninstall
 helm-uninstall: 

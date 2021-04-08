@@ -9,16 +9,15 @@ metadata:
   namespace: m4d-system
 spec:
   chart:
-    name: ghcr.io/mesh-for-data/hello-world-read-module-chart:latest
+    name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:latest
     values:
       image.tag: latest
   flows:
     - read
   capabilities:
-    credentials-managed-by: secret-provider
     api:
       protocol: s3
-      dataformat:
+      dataformat: csv
     supportedInterfaces:
     - flow: read
       source:
