@@ -1,5 +1,5 @@
 export DOCKER_USERNAME ?= Mohammad-nassar10
-export DOCKER_PASSWORD ?= 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
+export DOCKER_PASSWORD ?=
 export DOCKER_HOSTNAME ?= ghcr.io
 export DOCKER_NAMESPACE ?= mohammad-nassar10
 export DOCKER_TAGNAME ?= latest
