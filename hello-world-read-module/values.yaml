@@ -9,9 +9,9 @@ replicaCount: 1
 
 ## Module image
 image: 
-  repository: ghcr.io/mohammad-nassar10/hello-world-read-module 
+  repository: ghcr.io/mohammad-nassar10/hello-world-read-module-2 
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   pullSecret: null
 
 imagePullSecrets: []
@@ -24,12 +24,12 @@ read:
     connection:
       name: s3
       s3:
-        bucket: cloud-object-storage-l4-cos-standard-7vz
-        endpoint: s3.us-east.cloud-object-storage.appdomain.cloud
-        object_key: data.csv
+        bucket: 
+        endpoint: 
+        object_key: 
       type: 2
-    credentialLocation: htttp://test/test
-    format: csv
+    credentialLocation: 
+    format: parquet
 
 nameOverride: ""
 fullnameOverride: ""

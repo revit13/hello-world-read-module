@@ -12,7 +12,7 @@ spec:
     purpose: Fraud Detection
     role: Data Owner
   data:
-    - dataSetID: "{\"ServerName\":\"mds1\",\"AssetGuid\":\"806d357c-86da-422a-890e-7ac3998a7f1d\"}"
+    - dataSetID: "default/data-csv"
       requirements:
         interface:
           protocol: s3
