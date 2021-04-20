@@ -13,7 +13,7 @@ The configuration for the chart is in the values file.
 
 - Kubernetes cluster 1.10+
 - Helm 3.0.0+
-- Install Mesh for Data using the Quick Start guide.
+- Install Mesh for Data using the [Quick Start]() guide.
 
 ## Installation
 
@@ -24,7 +24,7 @@ some information about the used dataset and then run a simple web server.
 ### Modify values in Makefile
 
 In `Makefile`:
-- Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_IMG_NAME`, and `DOCKER_CHART_IMG_NAME` to your own preferences. An exapmle can be found in `Makefile`.
+- Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_IMG_NAME`, and `DOCKER_CHART_IMG_NAME` to your own preferences. An example can be found in `Makefile`.
 
 ### Build Docker image for Python application
 
@@ -36,7 +36,7 @@ make docker-build
 
 ### Push Docker image to your preferred container registry
 
-Run the following command to login to your registry that intended to store the docker image and to push the image to the registry.
+Run the following command to login to the registry meant to store the docker image and to push the image to the registry.
 
 ```bash
 make docker-push
@@ -50,7 +50,7 @@ make docker-push
 
 ### Login to Helm registry
 
-Run the following command to login to your registry that intended to store the helm chart.
+Run the following command to login to the registry meant to store the helm chart.
 
 ```bash
 make helm-login
@@ -81,9 +81,9 @@ make helm-uninstall
 ```
 
 ## Deploy M4D module
-1. In your module yaml spec (`hello-world-module.yaml`):
+1. In your module yaml spec (`hello-world-read-module.yaml`):
     - Change `spec.chart.name` to your chart registry.
-    - Define `flows` and `capabilities` for your module, an exapmle can be found in `hello-world-module.yaml`. 
+    - Define `flows` and `capabilities` for your module, an example can be found in `hello-world-read-module.yaml`. 
 
 2. Deploy `M4DModule` in `m4d-system` namespace:
 ```bash
@@ -92,16 +92,10 @@ kubectl create -f hello-world-read-module.yaml -n m4d-system
 
 ## Register data asset in a data catalog
 
-A registeration of your data asset in a data catalog is needed in order to use it by the `m4d-manager`.
+You need to register your data asset in a data catalog in order for it to be used by the `m4d-manager`.
 
-- Follow step `Register the dataset in a data catalog` in [this example]() to register the credentials required for accessing the dataset. Then, to register the data asset in the catalog.
+- Follow step `Register the dataset in a data catalog` in [this example](). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
-
-## Deploy cluster metadata
-Run the following command to install a configmap cluster-metadata in `m4d-system` namespace.
-```bash
-kubectl create -f cluster-metadata.yaml -n m4d-system
-```
 
 ## Deploy M4D application which triggers module
 1. In `m4dapplication.yaml`:
