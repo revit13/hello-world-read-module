@@ -12,7 +12,12 @@ spec:
     purpose: Fraud Detection
     role: Data Owner
   data:
-    - dataSetID: "default/data-csv"
+    - dataSetID: "default/medals-winners"
+      requirements:
+        interface:
+          protocol: s3
+          dataformat: csv
+    - dataSetID: "default/bank"
       requirements:
         interface:
           protocol: s3
