@@ -15,6 +15,9 @@ spec:
   flows:
     - read
   capabilities:
+    actions:
+      - id: redact-ID
+        level: 2  # column
     api:
       protocol: s3
       dataformat: csv

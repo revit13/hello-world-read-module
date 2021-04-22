@@ -1,63 +1,21 @@
-# Default values for hello-world-module job.
+# Default values for arrow-flight-module.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global:
-  environment: []
-
 replicaCount: 1
 
-## Module image
 image: 
-  repository: ghcr.io/mohammad-nassar10/hello-world-read-module-2 
+  repository: ghcr.io/mohammad-nassar10/hello-world-read-module
   tag: latest
   pullPolicy: Always
   pullSecret: null
 
-imagePullSecrets: []
-
-# Action (copy/read)
-read:
-- assetID: "test1"
-  # Read source
-  source:
-    connection:
-      name: s3
-      s3:
-        bucket: 
-        endpoint: 
-        object_key: 
-      type: 2
-    credentialLocation: 
-    format: parquet
-
 nameOverride: ""
 fullnameOverride: ""
 
-## Job configurations
-#backoffLimit: 4
-#restartPolicy: Never
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
 service:
   type: ClusterIP
   port: 80
-annotations: {}
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -65,8 +23,14 @@ resources: {}
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #  cpu: 100m
+  #  memory: 128Mi
   # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

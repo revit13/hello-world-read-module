@@ -4,16 +4,32 @@
 import os
 import yaml
 import urllib.request
+import csv
 
 import argparse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import logging
+
+data_dict = {}
+
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
+
+    def readurl(self,url):
+        response = urllib.request.urlopen(url)
+        lines = [l.decode('utf-8') for l in response.readlines()]
+        cr = csv.reader(lines)
+        count = 0
+        for row in cr:
+            if count > 10:
+                break
+            count += 1
+            row_str = ", ".join(row)+'\n'
+            self.wfile.write(row_str.encode("utf8"))
 
     def _html(self, message):
         """This just generates an HTML document that includes `message`
@@ -24,8 +40,18 @@ class S(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self._set_headers()
-        self.wfile.write(self._html("hi!"))
-        logging.info("GET request\n")
+        logging.info("path is " + self.path)
+        data = data_dict.get(self.path[1:], "notfound")
+        #logging.info("url is " + url)
+        logging.info("GET request")
+        self.wfile.write("GET request for {}\n".format(self.path).encode('utf-8'))
+        if(data != "notfound"):
+            url = data['endpoint_url']
+            self.readurl(url)
+            logging.info("Transformation action is {} for the columns {}\n".format(data['action'],data['transferred_columns']))
+        else:
+            self.wfile.write("unvalid request\n".encode('utf-8'))
+        
 
     def do_HEAD(self):
         self._set_headers()
@@ -36,7 +62,44 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(self._html("POST!"))
         logging.info("POST request\n")
 
-def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=8000):
+def run(config_path=None, server_class=HTTPServer, handler_class=S, addr="localhost", port=8000):
+    logging.basicConfig(level=logging.INFO)
+    logging.info("\nHello World Read Module!")
+    # with open(config_path, 'r') as stream:
+    #     content = yaml.safe_load(stream)
+    #     for key,val in content.items():
+    #         if "data" in key:
+    #             for i in range(len(val)):
+    #                 data = val[i]
+    #                 name = data["name"]
+    #                 format = data["format"]
+    #                 connection = data["connection"]
+    #                 connection_type = connection["type"]
+    #                 url = connection[connection_type]['endpoint_url']
+    #                 transformations = data["transformations"][0]
+    #                 action = transformations['action']
+    #                 transferred_columns = transformations['columns']
+    #                 data_dict[name] = {'url':url, 'action':action, 'transferred_columns':transferred_columns}
+                
+    with open('../etc/conf/conf.yaml', 'r') as stream:
+        content = yaml.safe_load(stream)
+        logging.info(content)
+        for key,val in content.items():
+            if "data" in key:
+                for i in range(len(val)):
+                    data = val[i]
+                    connectionName = data["name"]
+                    name = connectionName.split("/")[1]
+                    connectionFormat = data["format"]
+                    s3Bucket = data["path"]
+                    endpoint_url = data["connection"]["s3"]["endpoint_url"]
+                    transformations = data["transformations"][0]
+                    action = transformations['action']
+                    transferred_columns = transformations['columns']
+                    data_dict[name] = {'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
+                    
+    
+    logging.info(data_dict)
     server_address = (addr, port)
     httpd = server_class(server_address, handler_class)
 
@@ -48,36 +111,11 @@ def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=8000):
     httpd.server_close()
     logging.info('Stopping httpd...\n')
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    logging.info("\nHello World Read Module!")
 
-    with open('../etc/conf/conf.yaml', 'r') as stream:
-        content = yaml.safe_load(stream)
-        for key,val in content.items():
-            if "data" in key:
-                data = val[0]
-                url = data['qqq']
-                connectionName = data["name"]
-                connectionFormat = data["format"]
-                s3Bucket = data["s3.bucket"]
-                s3Endpoint = data["s3.endpoint"]
-        
-
-    logging.info("\nname is " + connectionName)
-    logging.info("\nConnection format is " + connectionFormat)
-    logging.info("\nS3 bucket is " + s3Bucket)
-    logging.info("\nS3 endpoint is " + s3Endpoint)
-    logging.info("\nurl is " + url)
-    logging.info ("\nREAD SUCCEEDED")
-    link = urllib.request.urlopen(url)
-    #print(link.read())
-    run()
-    
 
 
 if __name__ == "__main__":
-    '''parser = argparse.ArgumentParser(description="Run a simple HTTP server")
+    parser = argparse.ArgumentParser(description="Run an HTTP server")
     parser.add_argument(
         "-l",
         "--listen",
@@ -92,63 +130,5 @@ if __name__ == "__main__":
         help="Specify the port on which the server listens",
     )
     args = parser.parse_args()
-    run(addr=args.listen, port=args.port)'''
-    main()
-
-
-
-
-"""
-Very simple HTTP server in python for logging requests
-Usage::
-    ./hello-world-read-module.py [<port>]
-"""
-'''
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import logging
-
-import os
-import yaml
-
-class S(BaseHTTPRequestHandler):
-    def _set_response(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
-    def do_GET(self):
-        logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
-        self._set_response()
-        self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
-
-
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
-        post_data = self.rfile.read(content_length) # <--- Gets the data itself
-        logging.info("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n",
-                str(self.path), str(self.headers), post_data.decode('utf-8'))
-
-        self._set_response()
-        self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
-
-def run(server_class=HTTPServer, handler_class=S, port=8080):
-    logging.basicConfig(level=logging.INFO)
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    logging.info('Starting httpd...\n')
-    print("\nHello World Read Module!")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    httpd.server_close()
-    logging.info('Stopping httpd...\n')
-
-if __name__ == '__main__':
-    from sys import argv
-
-    if len(argv) == 2:
-        run(port=int(argv[1]))
-    else:
-        run()
-'''
+    run(addr=args.listen, port=args.port)
+    #main()
