@@ -44,9 +44,8 @@ make docker-push
 
 ### Configure the chart
 - The helm chart defines some Kubernetes resources depending on the values in `values.yaml`. These resources are used to deploy a Kubernetes pod for an M4D module.
-- Modify repository in `values.yaml` to your Docker image registry. 
-- Modify read action as needed with appropriate values.
-- At runtime, the `m4d-manager` will pass in the read values to the module so you can leave them blank in your final chart. 
+- Modify repository in `values.yaml` to your Docker image registry.
+- At runtime, the `m4d-manager` will pass in the read values to the module so you can leave them blank in your final chart.
 
 ### Login to Helm registry
 
@@ -96,6 +95,17 @@ You need to register your data asset in a data catalog in order for it to be use
 
 - Follow step `Register the dataset in a data catalog` in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
+- As an example you can run these commands to register two assets exist in `sample_assets`:
+```bash
+kubectl apply -f sample_assets/assetMedals.yaml
+kubectl apply -f sample_assets/secretMedals.yaml
+kubectl apply -f sample_assets/assetBank.yaml
+kubectl apply -f sample_assets/secretBank.yaml
+```
+
+## Define policies
+
+You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies).
 
 ## Deploy M4D application which triggers module
 1. In `m4dapplication.yaml`:
