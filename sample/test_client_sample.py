@@ -17,21 +17,7 @@ import requests
 def main(config_path, data_set):
     r = requests.get('http://localhost:8000/' + data_set)
     print(r.text)
-    #readurl(url)
 
-
-
-def readurl(url):
-    #url = 'http://winterolympicsmedals.com/medals.csv'
-    response = urllib.request.urlopen(url)
-    lines = [l.decode('utf-8') for l in response.readlines()]
-    cr = csv.reader(lines)
-    count = 0
-    for row in cr:
-        if count > 10:
-            break
-        count += 1
-        print(row)
 
 if __name__ == "__main__":
     import argparse

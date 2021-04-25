@@ -1,9 +1,0 @@
-apiVersion: v1
-metadata:
-  name: cluster-metadata
-data:
-  ClusterName: US-cluster
-  Region: US
-  datamesh1: kubernetes
-  Zone: Turkey
-kind: ConfigMap

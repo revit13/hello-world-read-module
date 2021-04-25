@@ -50,7 +50,13 @@ class S(BaseHTTPRequestHandler):
             self.readurl(url)
             logging.info("Transformation action is {} for the columns {}\n".format(data['action'],data['transferred_columns']))
         else:
-            self.wfile.write("unvalid request\n".encode('utf-8'))
+            self.wfile.write("invalid request\n".encode('utf-8'))
+            self.wfile.write("The avialable datasets:\n".encode('utf-8'))
+            for key in data_dict:
+                self.wfile.write("dataset name: {}\n".format(key).encode('utf-8'))
+                for k in data_dict[key]:
+                    self.wfile.write("    {}: {}\n".format(k,data_dict[key][k]).encode('utf-8'))
+            logging.info(data_dict)
         
 
     def do_HEAD(self):
@@ -65,38 +71,22 @@ class S(BaseHTTPRequestHandler):
 def run(config_path=None, server_class=HTTPServer, handler_class=S, addr="localhost", port=8000):
     logging.basicConfig(level=logging.INFO)
     logging.info("\nHello World Read Module!")
-    # with open(config_path, 'r') as stream:
-    #     content = yaml.safe_load(stream)
-    #     for key,val in content.items():
-    #         if "data" in key:
-    #             for i in range(len(val)):
-    #                 data = val[i]
-    #                 name = data["name"]
-    #                 format = data["format"]
-    #                 connection = data["connection"]
-    #                 connection_type = connection["type"]
-    #                 url = connection[connection_type]['endpoint_url']
-    #                 transformations = data["transformations"][0]
-    #                 action = transformations['action']
-    #                 transferred_columns = transformations['columns']
-    #                 data_dict[name] = {'url':url, 'action':action, 'transferred_columns':transferred_columns}
                 
-    with open('../etc/conf/conf.yaml', 'r') as stream:
+    with open(config_path, 'r') as stream:
         content = yaml.safe_load(stream)
-        logging.info(content)
+        #logging.info(content)
         for key,val in content.items():
             if "data" in key:
                 for i in range(len(val)):
                     data = val[i]
                     connectionName = data["name"]
                     name = connectionName.split("/")[1]
-                    connectionFormat = data["format"]
-                    s3Bucket = data["path"]
+                    format = data["format"]
                     endpoint_url = data["connection"]["s3"]["endpoint_url"]
                     transformations = data["transformations"][0]
                     action = transformations['action']
                     transferred_columns = transformations['columns']
-                    data_dict[name] = {'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
+                    data_dict[name] = {'format':format, 'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
                     
     
     logging.info(data_dict)
@@ -129,6 +119,13 @@ if __name__ == "__main__":
         default=8000,
         help="Specify the port on which the server listens",
     )
+    parser.add_argument(
+        '-c', 
+        '--config', 
+        type=str, 
+        default='../etc/conf/conf.yaml', 
+        help='Path to config file'
+    )
     args = parser.parse_args()
-    run(addr=args.listen, port=args.port)
+    run(config_path=args.config, addr=args.listen, port=args.port)
     #main()

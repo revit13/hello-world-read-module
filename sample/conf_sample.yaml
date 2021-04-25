@@ -8,7 +8,7 @@ workers:
     address: "localhost"
     port: 8080
 data:
-  - name: "MedalsWinners"
+  - name: "default/medals-winners"
     format: csv
     connection:
       type: s3
@@ -21,7 +21,7 @@ data:
           - Event 
         options:
           redactValue: "XXXXX"
-  - name: "BankDetails"
+  - name: "default/bank"
     format: csv
     connection:
       type: s3
