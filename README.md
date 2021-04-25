@@ -129,24 +129,22 @@ kubectl get blueprint -n m4d-blueprints
 kubectl describe blueprint hello-world-read-module-test-default -n m4d-blueprints
 kubectl get pods -n m4d-blueprints
 ```
-If you are using the existing `hello-world-read-module.py`, you should see this in the `kubectl logs` of the `m4d-blueprint` Pod:
+If you are using the existing `hello-world-read-module.py`, you should see this in the `kubectl logs` of the `m4d-blueprints` Pod:
 ```
-$ kubectl logs hello-world-read-module-test-default-hello-worl-0ff24-94ff7t46d -n m4d-blueprints
-
+$ kubectl logs <m4d-blueprints pod> -n m4d-blueprints
 INFO:root:
 Hello World Read Module!
-INFO:root:
-name is default/data-csv
-INFO:root:
-Connection format is csv
-INFO:root:
-S3 bucket is cloud-object-storage-l4-cos-standard-7vz
-INFO:root:
-S3 endpoint is s3.eu.cloud-object-storage.appdomain.cloud
-INFO:root:
-url is http://www.google.com
-INFO:root:
-READ SUCCEEDED
 INFO:root:Starting httpd server on localhost:8000
 ```
 
+Then, you can do port forwarding in order to use the server by the following command:
+
+```bash
+kubectl port-forward <m4d-blueprints pod> -n m4d-blueprints 8000:8000 &
+```
+
+If you run the following request:
+```bash
+curl -X GET localhost:8000/medals-winners
+```
+you get the first 10 rows of the medals-winners dataset.
