@@ -106,7 +106,7 @@ if __name__ == "__main__":
         '-c', 
         '--config', 
         type=str, 
-        default='/etc/conf/conf.yaml', 
+        default='../etc/conf/conf.yaml', 
         help='Path to config file'
     )
     parser.add_argument(
