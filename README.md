@@ -13,7 +13,7 @@ The configuration for the chart is in the values file.
 
 - Kubernetes cluster 1.10+
 - Helm 3.0.0+
-- Install Mesh for Data using the [Quick Start]() guide.
+- Install Mesh for Data using the [Quick Start](https://607574aac73ac7a843dd6009--mesh-for-data.netlify.app/get-started/quickstart/) guide.
 
 ## Installation
 
@@ -94,7 +94,7 @@ kubectl create -f hello-world-read-module.yaml -n m4d-system
 
 You need to register your data asset in a data catalog in order for it to be used by the `m4d-manager`.
 
-- Follow step `Register the dataset in a data catalog` in [this example](). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
+- Follow step `Register the dataset in a data catalog` in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
 
 ## Deploy M4D application which triggers module
