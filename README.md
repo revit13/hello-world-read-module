@@ -1,34 +1,38 @@
 # hello-world-read-module
 
-## A Helm Chart for an example Mesh for Data module
+An example of read module for Mesh for Data.
+
+<!-- ## A Helm Chart for an example Mesh for Data module -->
 
 ## Introduction
 
-This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
+In this repository we show how to create a read module for Mesh for Data. We tested the read module with a python application that launches a web server to respond to GET requests of datasets.
+<!-- This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
 In the helm chart a service, a serviceaccount, and a deployment are defined.
 
-The configuration for the chart is in the values file.
+The configuration for the chart is in the values file. -->
 
 ## Prerequisites
 
 - Kubernetes cluster 1.10+
 - Helm 3.0.0+
 - Install Mesh for Data using the [Quick Start](https://607574aac73ac7a843dd6009--mesh-for-data.netlify.app/get-started/quickstart/) guide.
+- Docker repository (such as ghcr.io).
 
 ## Installation
 
 ### code
-Create a file to implement your usage of the read module. An example can be found in `hello-world-read-module.py` where you can find python code to print 
-some information about the used dataset and then run a simple web server.  
+Create a file to implement your usage of the read module. An example can be found in `hello-world-read-module.py` where you can find a python code that runs a simple web server and responds to GET requests of datasets.  
 
 ### Modify values in Makefile
 
 In `Makefile`:
 - Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_IMG_NAME`, and `DOCKER_CHART_IMG_NAME` to your own preferences. An example can be found in `Makefile`.
+- One possible option is to create public registries in github. Then create a Personal Access Token. In this case the field `DOCKER_USERNAME` will be your github username and `DOCKER_PASSWORD` is the Personal Access Token.
 
 ### Build Docker image for Python application
 
-Create a Dockerfile to run your code that created in a previous step. Then, run the following command to build a docker image from the Dockerfile.
+Create a Dockerfile to run your code that you created in a previous step. Then, run the following command to build a docker image from the Dockerfile.
 
 ```bash
 make docker-build
@@ -43,9 +47,12 @@ make docker-push
 ```
 
 ### Configure the chart
-- The helm chart defines some Kubernetes resources depending on the values in `values.yaml`. These resources are used to deploy a Kubernetes pod for an M4D module.
+This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
+In the helm chart a service, a serviceaccount, and a deployment are defined.
+
+- The helm chart defines some Kubernetes resources depending on the values in `values.yaml`.
 - Modify repository in `values.yaml` to your Docker image registry.
-- At runtime, the `m4d-manager` will pass in the read values to the module so you can leave them blank in your final chart.
+- At runtime, the `m4d-manager` will pass in the values (like data location, format, and credentials) to the module so you can leave them blank in your final chart.
 
 ### Login to Helm registry
 
