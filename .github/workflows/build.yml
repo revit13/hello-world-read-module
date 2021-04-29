@@ -3,12 +3,12 @@ name: Build
 on:
   push:
     branches:
-      - testWF
+      - updateModule
     tags:
       - '*'
   pull_request:
     branches:
-      - testWF
+      - updateModule
 
 env:
   DOCKER_HOSTNAME: ghcr.io
@@ -50,7 +50,7 @@ jobs:
       if: contains(github.ref, 'tags')
       run: docker push ghcr.io/mohammad-nassar10/hello-world-read-module:${{ steps.version.outputs.version }}${{ matrix.RELEASE_TAG_SUFFIX }}
         
-     - name: Build helm chart 
+    - name: Build helm chart 
       run: make helm-verify
     - name: Helm login
       if: ${{ github.event_name != 'pull_request' }}
