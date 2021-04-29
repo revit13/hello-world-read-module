@@ -88,8 +88,13 @@ def run(config_path=None, server_class=HTTPServer, handler_class=S, addr="localh
                     transferred_columns = transformations['columns']
                     data_dict[name] = {'format':format, 'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
                     
+    logging.info("The avialable datasets:\n")
+    for key in data_dict:
+        logging.info("dataset name: {}\n".format(key))
+        for k in data_dict[key]:
+            logging.info("    {}: {}\n".format(k,data_dict[key][k]))
     
-    logging.info(data_dict)
+    #logging.info(data_dict)
     server_address = (addr, port)
     httpd = server_class(server_address, handler_class)
 
