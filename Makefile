@@ -66,6 +66,7 @@ helm-chart-push: helm-login
 	helm chart list ${CHART_IMG}
 	helm chart push ${CHART_IMG}
 	helm chart remove ${CHART_IMG}
+	helm uninstall ${HELM_RELEASE} || true
 
 .PHONY: helm-chart-pull
 helm-chart-pull: helm-login 
