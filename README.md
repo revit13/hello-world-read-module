@@ -88,6 +88,12 @@ make helm-chart-push
 ```bash
 kubectl create -f hello-world-read-module.yaml -n m4d-system
 ```
+3. Check if `M4DApplication` successfully deployed:
+```bash
+kubectl get m4dmodule hello-world-read-module -n m4d-system
+kubectl describe m4dmodule hello-world-read-module -n m4d-system
+```
+
 
 ## Register data asset in a data catalog
 
