@@ -28,7 +28,7 @@ Create a file to implement your usage of the read module. An example can be foun
 
 In `Makefile`:
 - Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_IMG_NAME`, and `DOCKER_CHART_IMG_NAME` to your own preferences. An example can be found in `Makefile`.
-- One possible option is to create public registries in github. Then create a Personal Access Token. In this case the field `DOCKER_USERNAME` will be your github username and `DOCKER_PASSWORD` is the Personal Access Token.
+- One possible option is to create public registries in github. Then create a Personal Access Token. In this case the field `DOCKER_USERNAME` will be your github username and `DOCKER_PASSWORD` is the Personal Access Token. Note that you need to change the visibility of the packages to public.
 
 ### Build Docker image for Python application
 
@@ -72,19 +72,12 @@ make helm-verify
 
 ### Push the Helm chart
 
-Run the following command to login to your registry that intended to store the helm chart and to push the chart to the registry.
+Run the following command to login to your registry that intended to store the helm chart and to push the chart to the registry. Then, uninstall the helm chart.
 
 ```bash
 make helm-chart-push
 ```
 
-## Uninstallation
-
-After pushing the chart to registry, it is possible to uninstall the helm chart.
-
-```bash
-make helm-uninstall
-```
 
 ## Deploy M4D module
 1. In your module yaml spec (`hello-world-read-module.yaml`):
@@ -157,3 +150,13 @@ curl -X GET localhost:8000/medals-winners
 you get the first 10 rows of the medals-winners dataset.
 
 ## Clean
+
+Run the following command to delete the m4d application:
+```bash
+kubectl delete m4dapplication hello-world-read-module-test -n default
+```
+
+Run the following command to delete the m4d module:
+```bash
+kubectl delete m4dmodule hello-world-read-module -n m4d-system
+```
