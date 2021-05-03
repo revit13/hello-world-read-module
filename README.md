@@ -123,7 +123,7 @@ You can define OpenPolicyAgent policy to apply them to datasets. You can follow 
 ```bash
 kubectl apply -f m4dapplication.yaml -n default
 ```
-3.  Check if `M4DApplication` successfully deployed:
+3.  Check if `M4DModule` successfully deployed:
 ```bash
 kubectl get m4dapplication -n default
 kubectl describe M4DApplication hello-world-read-module-test -n default
