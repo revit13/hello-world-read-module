@@ -2,7 +2,7 @@ export DOCKER_USERNAME ?= Mohammad-nassar10
 export DOCKER_PASSWORD ?= 
 export DOCKER_HOSTNAME ?= ghcr.io
 export DOCKER_NAMESPACE ?= mohammad-nassar10
-export DOCKER_TAGNAME ?= 0.0.0
+export DOCKER_TAGNAME ?= v0.0.1
 
 DOCKER_IMG_NAME ?= hello-world-read-module
 DOCKER_CHART_IMG_NAME ?= hello-world-read-module-chart
