@@ -9,9 +9,9 @@ metadata:
   namespace: m4d-system
 spec:
   chart:
-    name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:latest
+    name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:0.0.0
     values:
-      image.tag: latest
+      image.tag: 0.0.0
   flows:
     - read
   capabilities:
