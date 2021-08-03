@@ -1,12 +1,12 @@
 # hello-world-read-module
 
-An example of read module for Mesh for Data.
+An example of read module for Fybrik.
 
-<!-- ## A Helm Chart for an example Mesh for Data module -->
+<!-- ## A Helm Chart for an example Fybrik module -->
 
 ## Introduction
 
-In this repository we show how to create a read module for Mesh for Data. We tested the read module with a python application that launches a web server to respond to GET requests of datasets.
+In this repository we show how to create a read module for Fybrik. We tested the read module with a python application that launches a web server to respond to GET requests of datasets.
 <!-- This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
 In the helm chart a service, a serviceaccount, and a deployment are defined.
 
@@ -16,7 +16,7 @@ The configuration for the chart is in the values file. -->
 
 - Kubernetes cluster 1.10+
 - Helm 3.0.0+
-- Install Mesh for Data using the [Quick Start](https://607574aac73ac7a843dd6009--mesh-for-data.netlify.app/get-started/quickstart/) guide.
+- Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide.
 - Docker repository (such as ghcr.io).
 
 ## Installation
@@ -88,7 +88,7 @@ make helm-chart-push
 ```bash
 kubectl create -f hello-world-read-module.yaml -n m4d-system
 ```
-3. Check if `M4DApplication` successfully deployed:
+3. Check if `FybrikApplication` successfully deployed:
 ```bash
 kubectl get m4dmodule hello-world-read-module -n m4d-system
 kubectl describe m4dmodule hello-world-read-module -n m4d-system
@@ -99,7 +99,7 @@ kubectl describe m4dmodule hello-world-read-module -n m4d-system
 
 You need to register your data asset in a data catalog in order for it to be used by the `m4d-manager`.
 
-- Follow step `Register the dataset in a data catalog` in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
+- Follow step `Register the dataset in a data catalog` in [this example](https://fybrik.io/dev/samples/notebook/). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
 - As an example you can run these commands to register two assets exist in `sample_assets`:
 ```bash
@@ -111,22 +111,22 @@ kubectl apply -f sample_assets/secretBank.yaml
 
 ## Define policies
 
-You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies).
+You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://fybrik.io/dev/samples/notebook/).
 
 ## Deploy M4D application which triggers module
-1. In `m4dapplication.yaml`:
+1. In `fybrikapplication.yaml`:
     - Change `metadata.name` to your application name.
     - Define `appInfo.purpose`, `appInfo.role`, and `spec.data`.
     - Change `data.dataSetID` field to the identifier of the asset in the catalog which is in the format `<namespace>/<name>`.
  
-2.  Deploy `M4DApplication` in `default` namespace:
+2.  Deploy `FybrikApplication` in `default` namespace:
 ```bash
-kubectl apply -f m4dapplication.yaml -n default
+kubectl apply -f fybrikapplication.yaml -n default
 ```
 3.  Check if `M4DModule` successfully deployed:
 ```bash
-kubectl get m4dapplication -n default
-kubectl describe M4DApplication hello-world-read-module-test -n default
+kubectl get FybrikApplication -n default
+kubectl describe FybrikApplication hello-world-read-module-test -n default
 ```
 
 4.  Check if module was triggered in `m4d-blueprints`:
@@ -159,7 +159,7 @@ you get the first 10 rows of the medals-winners dataset.
 
 Run the following command to delete the m4d application:
 ```bash
-kubectl delete m4dapplication hello-world-read-module-test -n default
+kubectl delete FybrikApplication hello-world-read-module-test -n default
 ```
 
 Run the following command to delete the m4d module:

@@ -1,5 +1,5 @@
   
-apiVersion: app.m4d.ibm.com/v1alpha1
+apiVersion: app.fybrik.io/v1alpha1
 kind: M4DModule
 metadata:
   name: hello-world-read-module
