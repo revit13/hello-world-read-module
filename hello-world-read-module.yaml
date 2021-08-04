@@ -1,12 +1,12 @@
   
 apiVersion: app.fybrik.io/v1alpha1
-kind: M4DModule
+kind: FybrikModule
 metadata:
   name: hello-world-read-module
   labels:
     name: hello-world-read-module
     version: 0.0.1  # semantic version
-  namespace: m4d-system
+  namespace: fybrik-system
 spec:
   chart:
     name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:v0.0.1
