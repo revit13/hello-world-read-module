@@ -1,13 +1,13 @@
 # hello-world-read-module
 
-An example of read module for Mesh for Data.
+An example of read module for Fybrik.
 
-<!-- ## A Helm Chart for an example Mesh for Data module -->
+<!-- ## A Helm Chart for an example Fybrik module -->
 
 ## Introduction
 
-In this repository we show how to create a read module for Mesh for Data. We tested the read module with a python application that launches a web server to respond to GET requests of datasets.
-<!-- This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
+In this repository we show how to create a read module for Fybrik. We tested the read module with a python application that launches a web server to respond to GET requests of datasets.
+<!-- This helm chart defines a common structure to deploy a Kubernetes pod for an Fybrik module.
 In the helm chart a service, a serviceaccount, and a deployment are defined.
 
 The configuration for the chart is in the values file. -->
@@ -16,7 +16,7 @@ The configuration for the chart is in the values file. -->
 
 - Kubernetes cluster 1.10+
 - Helm 3.0.0+
-- Install Mesh for Data using the [Quick Start](https://607574aac73ac7a843dd6009--mesh-for-data.netlify.app/get-started/quickstart/) guide.
+- Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide.
 - Docker repository (such as ghcr.io).
 
 ## Installation
@@ -47,12 +47,12 @@ make docker-push
 ```
 
 ### Configure the chart
-This helm chart defines a common structure to deploy a Kubernetes pod for an M4D module.
+This helm chart defines a common structure to deploy a Kubernetes pod for an Fybrik module.
 In the helm chart a service, a serviceaccount, and a deployment are defined.
 
 - The helm chart defines some Kubernetes resources depending on the values in `values.yaml`.
 - Modify repository in `values.yaml` to your Docker image registry.
-- At runtime, the `m4d-manager` will pass in the values (like data location, format, and credentials) to the module so you can leave them blank in your final chart.
+- At runtime, the `fybrik-manager` will pass in the values (like data location, format, and credentials) to the module so you can leave them blank in your final chart.
 
 ### Login to Helm registry
 
@@ -79,27 +79,27 @@ make helm-chart-push
 ```
 
 
-## Deploy M4D module
+## Deploy Fybrik module
 1. In your module yaml spec (`hello-world-read-module.yaml`):
     - Change `spec.chart.name` to your chart registry.
     - Define `flows` and `capabilities` for your module, an example can be found in `hello-world-read-module.yaml`. 
 
-2. Deploy `M4DModule` in `m4d-system` namespace:
+2. Deploy `FybrikModule` in `fybrik-system` namespace:
 ```bash
-kubectl create -f hello-world-read-module.yaml -n m4d-system
+kubectl create -f hello-world-read-module.yaml -n fybrik-system
 ```
-3. Check if `M4DApplication` successfully deployed:
+3. Check if `FybrikApplication` successfully deployed:
 ```bash
-kubectl get m4dmodule hello-world-read-module -n m4d-system
-kubectl describe m4dmodule hello-world-read-module -n m4d-system
+kubectl get fybrikmodule hello-world-read-module -n fybrik-system
+kubectl describe fybrikmodule hello-world-read-module -n fybrik-system
 ```
 
 
 ## Register data asset in a data catalog
 
-You need to register your data asset in a data catalog in order for it to be used by the `m4d-manager`.
+You need to register your data asset in a data catalog in order for it to be used by the `fybrik-manager`.
 
-- Follow step `Register the dataset in a data catalog` in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
+- Follow step `Register the dataset in a data catalog` in [this example](https://fybrik.io/dev/samples/notebook/). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
 - As an example you can run these commands to register two assets exist in `sample_assets`:
 ```bash
@@ -111,33 +111,33 @@ kubectl apply -f sample_assets/secretBank.yaml
 
 ## Define policies
 
-You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://607573df9860bf9afcf4805b--mesh-for-data.netlify.app/samples/notebook/#define-data-access-policies).
+You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://fybrik.io/dev/samples/notebook/).
 
-## Deploy M4D application which triggers module
-1. In `m4dapplication.yaml`:
+## Deploy Fybrik application which triggers module
+1. In `fybrikapplication.yaml`:
     - Change `metadata.name` to your application name.
     - Define `appInfo.purpose`, `appInfo.role`, and `spec.data`.
     - Change `data.dataSetID` field to the identifier of the asset in the catalog which is in the format `<namespace>/<name>`.
  
-2.  Deploy `M4DApplication` in `default` namespace:
+2.  Deploy `FybrikApplication` in `default` namespace:
 ```bash
-kubectl apply -f m4dapplication.yaml -n default
+kubectl apply -f fybrikapplication.yaml -n default
 ```
-3.  Check if `M4DModule` successfully deployed:
+3.  Check if `FybrikModule` successfully deployed:
 ```bash
-kubectl get m4dapplication -n default
-kubectl describe M4DApplication hello-world-read-module-test -n default
+kubectl get FybrikApplication -n default
+kubectl describe FybrikApplication hello-world-read-module-test -n default
 ```
 
-4.  Check if module was triggered in `m4d-blueprints`:
+4.  Check if module was triggered in `fybrik-blueprints`:
 ```bash
-kubectl get blueprint -n m4d-blueprints
-kubectl describe blueprint hello-world-read-module-test-default -n m4d-blueprints
-kubectl get pods -n m4d-blueprints
+kubectl get blueprint -n fybrik-blueprints
+kubectl describe blueprint hello-world-read-module-test-default -n fybrik-blueprints
+kubectl get pods -n fybrik-blueprints
 ```
-If you are using the existing `hello-world-read-module.py`, you should see this in the `kubectl logs` of the `m4d-blueprints` Pod:
+If you are using the existing `hello-world-read-module.py`, you should see this in the `kubectl logs` of the `fybrik-blueprints` Pod:
 ```
-$ kubectl logs <m4d-blueprints pod> -n m4d-blueprints
+$ kubectl logs <fybrik-blueprints pod> -n fybrik-blueprints
 INFO:root:
 Hello World Read Module!
 INFO:root:Starting httpd server on localhost:8000
@@ -146,7 +146,7 @@ INFO:root:Starting httpd server on localhost:8000
 Then, you can do port forwarding in order to use the server by the following command:
 
 ```bash
-kubectl port-forward <m4d-blueprints pod> -n m4d-blueprints 8000:8000 &
+kubectl port-forward <fybrik-blueprints pod> -n fybrik-blueprints 8000:8000 &
 ```
 
 If you run the following request:
@@ -157,12 +157,12 @@ you get the first 10 rows of the medals-winners dataset.
 
 ## Clean
 
-Run the following command to delete the m4d application:
+Run the following command to delete the fybrik application:
 ```bash
-kubectl delete m4dapplication hello-world-read-module-test -n default
+kubectl delete FybrikApplication hello-world-read-module-test -n default
 ```
 
-Run the following command to delete the m4d module:
+Run the following command to delete the fybrik module:
 ```bash
-kubectl delete m4dmodule hello-world-read-module -n m4d-system
+kubectl delete fybrikmodule hello-world-read-module -n fybrik-system
 ```
