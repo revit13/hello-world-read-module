@@ -8,28 +8,30 @@ metadata:
     version: 0.0.1  # semantic version
   namespace: fybrik-system
 spec:
+  type: service
   chart:
     name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:v0.0.1
     values:
       image.tag: v0.0.1
-  flows:
-    - read
   capabilities:
-    actions:
-      - id: redact-ID
-        level: 2  # column
-    api:
-      protocol: s3
-      dataformat: csv
-    supportedInterfaces:
-    - flow: read
-      source:
-        protocol: s3
-        dataformat: parquet
-    - flow: read
-      source:
+    - capability: read
+      scope: workload
+      actions:
+        - id: redact-ID
+          level: 2  # column
+      api:
+        endpoint:
+          port: 80
+          scheme: grpc
         protocol: s3
         dataformat: csv
+      supportedInterfaces:
+        - source:
+            protocol: s3
+            dataformat: parquet
+        - source:
+            protocol: s3
+            dataformat: csv
   statusIndicators:
     - kind: hello-world-read-module
       successCondition: status.status == SUCCEEDED
