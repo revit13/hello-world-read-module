@@ -15,7 +15,7 @@ The configuration for the chart is in the values file. -->
 ## Prerequisites
 
 - Kubernetes cluster 1.10+
-- Helm 3.0.0+
+- Helm 3.7+
 - Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide.
 - Docker repository (such as ghcr.io).
 
