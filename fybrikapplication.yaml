@@ -1,7 +1,7 @@
 apiVersion: app.fybrik.io/v1alpha1
 kind: FybrikApplication
 metadata:
-  name: hello-world-read-module-test
+  name: my-notebook 
 spec:
   selector:
    workloadSelector:
@@ -12,12 +12,12 @@ spec:
     purpose: Fraud Detection
     role: Data Owner
   data:
-    - dataSetID: "default/medals-winners"
+    - dataSetID: "fybrik-notebook-sample/medals-winners"
       requirements:
         interface:
           protocol: s3
           dataformat: csv
-    - dataSetID: "default/bank"
+    - dataSetID: "fybrik-notebook-sample/bank"
       requirements:
         interface:
           protocol: s3

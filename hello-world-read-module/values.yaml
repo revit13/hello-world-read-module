@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image: 
-  repository: ghcr.io/mohammad-nassar10/hello-world-read-module
-  tag: v0.0.1
+  repository: ghcr.io/fybrik/hello-world-read-module
+  tag: main
   pullPolicy: Always
   pullSecret: null
 

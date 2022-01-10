@@ -10,15 +10,15 @@ metadata:
 spec:
   type: service
   chart:
-    name: ghcr.io/mohammad-nassar10/hello-world-read-module-chart:v0.0.1
+    name: ghcr.io/fybrik/hello-world-read-module-chart:0.0.0-main
     values:
-      image.tag: v0.0.1
+      image.tag: main
   capabilities:
     - capability: read
       scope: workload
       actions:
-        - id: redact-ID
-          level: 2  # column
+        - name: RedactAction
+        - name: RemoveAction
       api:
         endpoint:
           port: 80

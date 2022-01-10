@@ -79,87 +79,146 @@ make helm-chart-push
 ```
 
 
-## Deploy Fybrik module
-1. In your module yaml spec (`hello-world-read-module.yaml`):
-    - Change `spec.chart.name` to your chart registry.
-    - Define `flows` and `capabilities` for your module, an example can be found in `hello-world-read-module.yaml`. 
+## Register as a Fybrik module
 
-2. Deploy `FybrikModule` in `fybrik-system` namespace:
+To register HWRM (Hello Read World Module) as a Fybrik module apply `hello-world-read-module.yaml` to the fybrik-system namespace of your cluster.
+
+To install the latest release run:
+
+```bash
+kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/latest/download/hello-world-read-module.yaml -n fybrik-system
+```
+
+### Version compatbility matrix
+
+| Fybrik           | HWRM     | Command
+| ---              | ---     | ---
+| 0.5.x            | 0.5.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.5.0/hello-world-read-module.yaml`
+| master           | main    | `https://raw.githubusercontent.com/fybrik/hello-world-read-module/main/hello-world-read-module.yaml`
+
+
+## Deploy and test Fybrik module
+
+Follow this section to deploy and test the module on a single cluster.
+
+### Before you begin
+
+Install Fybrik using the [Quick Start](https://fybrik.io/v0.5/get-started/quickstart/) guide. This sample assumes the use of the built-in catalog, Open Policy Agent (OPA) and flight module.
+
+> ***Notice: Please follow `version compatbility matrix` section above for deploying the correct version of Fybrik and this module.***
+
+### Deploy Fybrik module
+
+Deploy `FybrikModule` in `fybrik-system` namespace:
 ```bash
 kubectl create -f hello-world-read-module.yaml -n fybrik-system
 ```
-3. Check if `FybrikApplication` successfully deployed:
-```bash
-kubectl get fybrikmodule hello-world-read-module -n fybrik-system
-kubectl describe fybrikmodule hello-world-read-module -n fybrik-system
-```
+### Test using Fybrik Notebook sample
+
+Execute the sections in [Fybrik Notebook sample](https://fybrik.io/v0.5/samples/notebook/) until `Register the dataset in a data catalog` section (excluded).
 
 
 ## Register data asset in a data catalog
 
 You need to register your data asset in a data catalog in order for it to be used by the `fybrik-manager`.
 
-- Follow step `Register the dataset in a data catalog` in [this example](https://fybrik.io/dev/samples/notebook/). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
+- Follow step `Register the dataset in a data catalog` in [this example](https://fybrik.io/v0.5/samples/notebook/). These steps register the credentials required for accessing the dataset, and then register the data asset in the catalog.
 
 - As an example you can run these commands to register two assets exist in `sample_assets`:
 ```bash
-kubectl apply -f sample_assets/assetMedals.yaml
-kubectl apply -f sample_assets/secretMedals.yaml
-kubectl apply -f sample_assets/assetBank.yaml
-kubectl apply -f sample_assets/secretBank.yaml
+kubectl apply -f sample_assets/assetMedals.yaml -n fybrik-notebook-sample
+kubectl apply -f sample_assets/secretMedals.yaml -n fybrik-notebook-sample
+kubectl apply -f sample_assets/assetBank.yaml -n fybrik-notebook-sample
+kubectl apply -f sample_assets/secretBank.yaml -n fybrik-notebook-sample
 ```
 
-## Define policies
+### Define data access policies
 
-You can define OpenPolicyAgent policy to apply them to datasets. You can follow the `Define data access policies` section in [this example](https://fybrik.io/dev/samples/notebook/).
+  Define the following [OpenPolicyAgent](https://www.openpolicyagent.org/) policy to allow the write operation:
 
-## Deploy Fybrik application which triggers module
-1. In `fybrikapplication.yaml`:
-    - Change `metadata.name` to your application name.
-    - Define `appInfo.purpose`, `appInfo.role`, and `spec.data`.
-    - Change `data.dataSetID` field to the identifier of the asset in the catalog which is in the format `<namespace>/<name>`.
- 
-2.  Deploy `FybrikApplication` in `default` namespace:
+```bash
+package dataapi.authz
+
+rule[{"action": {"name":"RedactAction", "columns": column_names}, "policy": description}] {
+  description := "Redact columns tagged as PII in datasets tagged with finance = true"
+  input.action.actionType == "read"
+  input.resource.tags.finance
+  column_names := [input.resource.columns[i].name | input.resource.columns[i].tags.PII]
+  count(column_names) > 0
+}
+
+rule[{"action": {"name":"RedactAction", "columns": column_names}, "policy": description}] {
+  description := "Redact columns tagged as sensitive in datasets tagged with finance = true"
+  input.action.actionType == "read"
+  input.resource.tags.finance
+  column_names := [input.resource.columns[i].name | input.resource.columns[i].tags.sensitive]
+  count(column_names) > 0
+}
+```
+
+  In this sample only the policy above is applied. Copy the policy to a file named sample-policy.rego and then run:
+
+```bash
+kubectl -n fybrik-system create configmap sample-policy --from-file=sample-policy.rego
+kubectl -n fybrik-system label configmap sample-policy openpolicyagent.org/policy=rego
+while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; do echo "waiting for policy to be applied" && sleep 5; done
+```
+
+### Deploy Fybrik application which triggers module
+Deploy `FybrikApplication` in `default` namespace:
 ```bash
 kubectl apply -f fybrikapplication.yaml -n default
 ```
-3.  Check if `FybrikModule` successfully deployed:
+3.  Run the following command to wait until the `status` of the `FybrikApplication` is `ready`:
 ```bash
-kubectl get FybrikApplication -n default
-kubectl describe FybrikApplication hello-world-read-module-test -n default
+while [[ $(kubectl get fybrikapplication my-notebook -n default -o 'jsonpath={.status.ready}') != "true" ]]; do echo "waiting for FybrikApplication" && sleep 5; done
 ```
 
 4.  Check if module was triggered in `fybrik-blueprints`:
 ```bash
 kubectl get blueprint -n fybrik-blueprints
-kubectl describe blueprint hello-world-read-module-test-default -n fybrik-blueprints
+kubectl describe blueprint my-notebook-default -n fybrik-blueprints
+kubectl get job -n fybrik-blueprints
 kubectl get pods -n fybrik-blueprints
 ```
-If you are using the existing `hello-world-read-module.py`, you should see this in the `kubectl logs` of the `fybrik-blueprints` Pod:
+
+If you are using the `hello-world-read-module` image, you should see this in the `kubectl logs` of your completed Pod:
 ```
-$ kubectl logs <fybrik-blueprints pod> -n fybrik-blueprints
+$ kubectl logs my-notebook-default-hello-world-read-module-5f59d75c8f-v7z7p -n fybrik-blueprints
+
 INFO:root:
 Hello World Read Module!
+INFO:root:The avialable datasets:
+
+INFO:root:dataset name: medals-winners
+
+INFO:root:    format: csv
+
+INFO:root:    endpoint_url: http://winterolympicsmedals.com/medals.csv
+
+INFO:root:    action: Redact
+
+INFO:root:    transferred_columns: ['age']
+
+INFO:root:dataset name: bank
+
+INFO:root:    format: csv
+
+INFO:root:    endpoint_url: https://raw.githubusercontent.com/juliencohensolal/BankMarketing/master/rawData/bank-additional-full.csv
+
+INFO:root:    action: Redact
+
+INFO:root:    transferred_columns: ['age']
+
 INFO:root:Starting httpd server on localhost:8000
-```
 
-Then, you can do port forwarding in order to use the server by the following command:
-
-```bash
-kubectl port-forward <fybrik-blueprints pod> -n fybrik-blueprints 8000:8000 &
 ```
-
-If you run the following request:
-```bash
-curl -X GET localhost:8000/medals-winners
-```
-you get the first 10 rows of the medals-winners dataset.
 
 ## Clean
 
 Run the following command to delete the fybrik application:
 ```bash
-kubectl delete FybrikApplication hello-world-read-module-test -n default
+kubectl delete FybrikApplication my-notebook -n default
 ```
 
 Run the following command to delete the fybrik module:
