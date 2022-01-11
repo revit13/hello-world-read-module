@@ -7,13 +7,13 @@ export DOCKER_NAMESPACE ?= fybrik
 export DOCKER_TAGNAME ?= 0.0.0
 
 DOCKER_IMG_NAME ?= hello-world-read-module
-DOCKER_CHART_IMG_NAME ?= hello-world-read-module-chart
+HELM_IMG_NAME ?= hello-world-read-module-chart
 DOCKER_FILE ?= Dockerfile
 DOCKER_CONTEXT ?= .
 HELM_TAG ?= ${DOCKER_TAGNAME}
 
 APP_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_IMG_NAME}:${DOCKER_TAGNAME}
-CHART_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_CHART_IMG_NAME}:${DOCKER_TAGNAME}
+CHART_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${HELM_IMG_NAME}:${HELM_TAG}
 
 .PHONY: docker-all
 docker-all: docker-build docker-push

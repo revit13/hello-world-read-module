@@ -83,8 +83,7 @@ make helm-chart-push
 
 To register HWRM (Hello Read World Module) as a Fybrik module apply `hello-world-read-module.yaml` to the fybrik-system namespace of your cluster.
 
-To install the latest release run:
-
+In order to install the latest release, run:
 ```bash
 kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/latest/download/hello-world-read-module.yaml -n fybrik-system
 ```
@@ -96,10 +95,9 @@ kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/late
 | 0.5.x            | 0.5.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.5.0/hello-world-read-module.yaml`
 | master           | main    | `https://raw.githubusercontent.com/fybrik/hello-world-read-module/main/hello-world-read-module.yaml`
 
-
 ## Deploy and test Fybrik module
 
-Follow this section to deploy and test the module on a single cluster.
+Here is an example how to deploy and test the module on a single cluster.
 
 ### Before you begin
 
@@ -107,11 +105,11 @@ Install Fybrik using the [Quick Start](https://fybrik.io/v0.5/get-started/quicks
 
 > ***Notice: Please follow `version compatbility matrix` section above for deploying the correct version of Fybrik and this module.***
 
-### Deploy Fybrik module
+### Deploy the `hello-world-read-module` module
 
-Deploy `FybrikModule` in `fybrik-system` namespace:
+Deploy this module in the `fybrik-system` namespace:
 ```bash
-kubectl create -f hello-world-read-module.yaml -n fybrik-system
+kubectl apply -f hello-world-read-module.yaml -n fybrik-system
 ```
 ### Test using Fybrik Notebook sample
 
@@ -156,7 +154,7 @@ rule[{"action": {"name":"RedactAction", "columns": column_names}, "policy": desc
 }
 ```
 
-  In this sample only the policy above is applied. Copy the policy to a file named sample-policy.rego and then run:
+  Copy the policies to a file named sample-policy.rego and then run:
 
 ```bash
 kubectl -n fybrik-system create configmap sample-policy --from-file=sample-policy.rego
@@ -182,9 +180,9 @@ kubectl get job -n fybrik-blueprints
 kubectl get pods -n fybrik-blueprints
 ```
 
-If you are using the `hello-world-read-module` image, you should see this in the `kubectl logs` of your completed Pod:
+If you are using the `hello-world-read-module` image, you should see this in the `kubectl logs -n fybrik-blueprints` of your completed Pod:
 ```
-$ kubectl logs my-notebook-default-hello-world-read-module-5f59d75c8f-v7z7p -n fybrik-blueprints
+$ kubectl logs my-notebook-default-hello-world-read-module-xx -n fybrik-blueprints
 
 INFO:root:
 Hello World Read Module!
@@ -225,3 +223,5 @@ Run the following command to delete the fybrik module:
 ```bash
 kubectl delete fybrikmodule hello-world-read-module -n fybrik-system
 ```
+
+Please execute the `Cleanup` section from [Fybrik notebook sample](https://fybrik.io/dev/samples/notebook/)
