@@ -51,7 +51,7 @@ class S(BaseHTTPRequestHandler):
             logging.info("Transformation action is {} for the columns {}\n".format(data['action'],data['transferred_columns']))
         else:
             self.wfile.write("invalid request\n".encode('utf-8'))
-            self.wfile.write("The avialable datasets:\n".encode('utf-8'))
+            self.wfile.write("The available datasets:\n".encode('utf-8'))
             for key in data_dict:
                 self.wfile.write("dataset name: {}\n".format(key).encode('utf-8'))
                 for k in data_dict[key]:
@@ -88,7 +88,7 @@ def run(config_path=None, server_class=HTTPServer, handler_class=S, addr="localh
                     transferred_columns = transformations['columns']
                     data_dict[name] = {'format':format, 'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
                     
-    logging.info("The avialable datasets:\n")
+    logging.info("The available datasets:\n")
     for key in data_dict:
         logging.info("dataset name: {}\n".format(key))
         for k in data_dict[key]:

@@ -1,16 +1,19 @@
-export DOCKER_USERNAME ?= Mohammad-nassar10
+include Makefile.env
+
+export DOCKER_USERNAME ?= fybrik
 export DOCKER_PASSWORD ?= 
 export DOCKER_HOSTNAME ?= ghcr.io
-export DOCKER_NAMESPACE ?= mohammad-nassar10
-export DOCKER_TAGNAME ?= v0.0.1
+export DOCKER_NAMESPACE ?= fybrik
+export DOCKER_TAGNAME ?= 0.0.0
 
 DOCKER_IMG_NAME ?= hello-world-read-module
-DOCKER_CHART_IMG_NAME ?= hello-world-read-module-chart
+HELM_IMG_NAME ?= hello-world-read-module-chart
 DOCKER_FILE ?= Dockerfile
 DOCKER_CONTEXT ?= .
+HELM_TAG ?= ${DOCKER_TAGNAME}
 
 APP_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_IMG_NAME}:${DOCKER_TAGNAME}
-CHART_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_CHART_IMG_NAME}:${DOCKER_TAGNAME}
+CHART_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${HELM_IMG_NAME}:${HELM_TAG}
 
 .PHONY: docker-all
 docker-all: docker-build docker-push
@@ -97,3 +100,6 @@ helm-actions:
 
 .PHONY: helm-all
 helm-all: helm-verify helm-chart-push helm-chart-pull helm-uninstall helm-chart-install
+
+include hack/make-rules/tools.mk
+

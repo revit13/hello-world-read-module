@@ -15,11 +15,11 @@ data:
     {{- $redactColumns := list -}}
     {{- $removeColumns := list -}}
     {{- range .transformations -}}
-      {{- if eq .id "redact-ID" -}}
-        {{- $redactColumns = append  $redactColumns .args.column_name -}}
+      {{- if eq .name "RedactAction" -}}
+        {{- $redactColumns = .RedactAction.columns -}}
       {{- end -}}
-      {{- if eq .id "removed-ID" -}}
-        {{- $removeColumns = append  $removeColumns .args.column_name -}}
+      {{- if eq .name "RemoveAction" -}}
+        {{- $removeColumns = .RemoveAction.columns -}}
       {{- end -}}
     {{- end -}}
     {{- if $redactColumns }}
