@@ -16,15 +16,11 @@ spec:
   capabilities:
     - capability: read
       scope: workload
-      actions:
-        - name: RedactAction
-        - name: RemoveAction
       api:
-        endpoint:
-          port: 80
-          scheme: grpc
-        protocol: s3
-        dataformat: csv
+        connection:
+          name: rest
+          rest:
+            endpoint: "https://{{ .Release.Name }}.{{ .Release.Namespace }}:80/readAsset"
       supportedInterfaces:
         - source:
             protocol: s3
@@ -32,6 +28,9 @@ spec:
         - source:
             protocol: s3
             dataformat: csv
+      actions:
+        - name: RedactAction
+        - name: RemoveAction
   statusIndicators:
     - kind: hello-world-read-module
       successCondition: status.status == SUCCEEDED
