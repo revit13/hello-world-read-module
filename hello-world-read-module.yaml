@@ -31,8 +31,3 @@ spec:
       actions:
         - name: RedactAction
         - name: RemoveAction
-  statusIndicators:
-    - kind: hello-world-read-module
-      successCondition: status.status == SUCCEEDED
-      failureCondition: status.status == FAILED
-      errorMessage: status.error
