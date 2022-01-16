@@ -15,7 +15,7 @@ The configuration for the chart is in the values file. -->
 ## Prerequisites
 
 - Kubernetes cluster 1.10+
-- Helm 3.0.0+
+- Helm 3.7.0+
 - Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide.
 - Docker repository (such as ghcr.io).
 
@@ -27,7 +27,7 @@ Create a file to implement your usage of the read module. An example can be foun
 ### Modify values in Makefile
 
 In `Makefile`:
-- Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_IMG_NAME`, and `DOCKER_CHART_IMG_NAME` to your own preferences. An example can be found in `Makefile`.
+- Create a registry for helm chart and docker image. Then change the fields `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `DOCKER_HOSTNAME`, `DOCKER_NAMESPACE`, `DOCKER_TAGNAME`, `DOCKER_NAME`, and `HELM_TAG` to your own preferences. An example can be found in `Makefile`.
 - One possible option is to create public registries in github. Then create a Personal Access Token. In this case the field `DOCKER_USERNAME` will be your github username and `DOCKER_PASSWORD` is the Personal Access Token. Note that you need to change the visibility of the packages to public.
 
 ### Build Docker image for Python application
@@ -93,6 +93,7 @@ kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/late
 | Fybrik           | HWRM     | Command
 | ---              | ---     | ---
 | 0.5.x            | 0.5.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.5.0/hello-world-read-module.yaml`
+| 0.6.x            | 0.6.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.6.0/hello-world-read-module.yaml`
 | master           | main    | `https://raw.githubusercontent.com/fybrik/hello-world-read-module/main/hello-world-read-module.yaml`
 
 ## Deploy and test Fybrik module
@@ -101,7 +102,7 @@ Here is an example how to deploy and test the module on a single cluster.
 
 ### Before you begin
 
-Install Fybrik using the [Quick Start](https://fybrik.io/v0.5/get-started/quickstart/) guide. This sample assumes the use of the built-in catalog, Open Policy Agent (OPA) and flight module.
+Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide. This sample assumes the use of the built-in catalog, Open Policy Agent (OPA) and flight module.
 
 > ***Notice: Please follow `version compatbility matrix` section above for deploying the correct version of Fybrik and this module.***
 
@@ -113,7 +114,9 @@ kubectl apply -f hello-world-read-module.yaml -n fybrik-system
 ```
 ### Test using Fybrik Notebook sample
 
-Execute the sections in [Fybrik Notebook sample](https://fybrik.io/v0.5/samples/notebook/) until `Register the dataset in a data catalog` section (excluded).
+> ***Notice: Please use the README.md file of the desired release as the resources in this example may change between releases.***
+
+Execute the sections in [Fybrik Notebook sample](https://fybrik.io/dev/samples/notebook/) until `Register the dataset in a data catalog` section (excluded).
 
 
 ## Register data asset in a data catalog
@@ -140,16 +143,16 @@ package dataapi.authz
 rule[{"action": {"name":"RedactAction", "columns": column_names}, "policy": description}] {
   description := "Redact columns tagged as PII in datasets tagged with finance = true"
   input.action.actionType == "read"
-  input.resource.tags.finance
-  column_names := [input.resource.columns[i].name | input.resource.columns[i].tags.PII]
+  input.resource.metadata.tags.finance
+  column_names := [input.resource.metadata.columns[i].name | input.resource.metadata.columns[i].tags.PII]
   count(column_names) > 0
 }
 
 rule[{"action": {"name":"RedactAction", "columns": column_names}, "policy": description}] {
   description := "Redact columns tagged as sensitive in datasets tagged with finance = true"
   input.action.actionType == "read"
-  input.resource.tags.finance
-  column_names := [input.resource.columns[i].name | input.resource.columns[i].tags.sensitive]
+  input.resource.metadata.tags.finance
+  column_names := [input.resource.metadata.columns[i].name | input.resource.metadata.columns[i].tags.sensitive]
   count(column_names) > 0
 }
 ```

@@ -5,19 +5,20 @@ metadata:
 spec:
   secretRef: 
     name: bank
-  assetDetails:
+  details:
     dataFormat: csv
     connection:
-      type: s3
+      name: s3
       s3:
         endpoint: "https://raw.githubusercontent.com/juliencohensolal/BankMarketing/master/rawData/bank-additional-full.csv"
         bucket: "bucket"
-        objectKey: "bank.csv"
-  assetMetadata:
+        object_key: "bank.csv"
+  metadata:
+    name: "Bank Asset"
     geography: theshire
     tags:
-    - finance
-    componentsMetadata:
-      age: 
+      finance: true
+    columns:
+      - name: age
         tags:
-        - PII
+          PII: true

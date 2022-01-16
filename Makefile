@@ -6,14 +6,11 @@ export DOCKER_HOSTNAME ?= ghcr.io
 export DOCKER_NAMESPACE ?= fybrik
 export DOCKER_TAGNAME ?= 0.0.0
 
-DOCKER_IMG_NAME ?= hello-world-read-module
-HELM_IMG_NAME ?= hello-world-read-module-chart
 DOCKER_FILE ?= Dockerfile
 DOCKER_CONTEXT ?= .
-HELM_TAG ?= ${DOCKER_TAGNAME}
+DOCKER_NAME ?= hello-world-read-module
 
-APP_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_IMG_NAME}:${DOCKER_TAGNAME}
-CHART_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${HELM_IMG_NAME}:${HELM_TAG}
+APP_IMG ?= ${DOCKER_HOSTNAME}/${DOCKER_NAMESPACE}/${DOCKER_NAME}:${DOCKER_TAGNAME}
 
 .PHONY: docker-all
 docker-all: docker-build docker-push
@@ -35,71 +32,7 @@ endif
 docker-rmi:
 	docker rmi ${APP_IMG} || true
 
-HELM_VALUES ?= 
-
-CHART := ${DOCKER_IMG_NAME}
-HELM_RELEASE ?= rel1-${DOCKER_IMG_NAME}
-TEMP := /tmp
-
-export HELM_EXPERIMENTAL_OCI=1
-export GODEBUG=x509ignoreCN=0
-
-.PHONY: helm-login
-helm-login: 
-ifneq (${DOCKER_PASSWORD},)
-	helm registry login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" ${DOCKER_HOSTNAME}
-endif
-
-.PHONY: helm-verify
-helm-verify: 
-	helm lint ${CHART}
-	helm install ${HELM_RELEASE} ${CHART} ${HELM_VALUES}
-
-.PHONY: helm-uninstall
-helm-uninstall: 
-	helm uninstall ${HELM_RELEASE} || true
-
-.PHONY: helm-install
-helm-install: 
-	helm install ${HELM_RELEASE} ${CHART} ${HELM_VALUES}
-
-.PHONY: helm-chart-push
-helm-chart-push: helm-login 
-	helm chart save ${CHART} ${CHART_IMG}
-	helm chart list ${CHART_IMG}
-	helm chart push ${CHART_IMG}
-	helm chart remove ${CHART_IMG}
-	helm uninstall ${HELM_RELEASE} || true
-
-.PHONY: helm-chart-pull
-helm-chart-pull: helm-login 
-	helm chart pull ${CHART_IMG} 
-	helm chart list
-
-.PHONY: helm-chart-list
-helm-chart-list: 
-	helm chart list
-
-.PHONY: helm-chart-install
-helm-chart-install: 
-	helm chart export --destination=${TEMP} ${CHART_IMG} 
-	helm install ${HELM_RELEASE} ${TEMP}/${CHART} ${HELM_VALUES}
-	helm list
-
-.PHONY: helm-template
-helm-template: 
-	helm template ${HELM_RELEASE} ${CHART} ${HELM_VALUES}
-
-.PHONY: helm-debug
-helm-debug: helm
-	helm template ${HELM_RELEASE} ${CHART} ${HELM_VALUES} --debug
-
-.PHONY: helm-actions
-helm-actions:
-	helm show values ${CHART} | yq -y -r .actions
-
-.PHONY: helm-all
-helm-all: helm-verify helm-chart-push helm-chart-pull helm-uninstall helm-chart-install
 
 include hack/make-rules/tools.mk
+include hack/make-rules/helm.mk
 

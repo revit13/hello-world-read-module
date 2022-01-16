@@ -9,16 +9,13 @@ spec:
        app: notebook
      }
   appInfo:
-    purpose: Fraud Detection
-    role: Data Owner
+    intent: "Fraud Detection"
   data:
     - dataSetID: "fybrik-notebook-sample/medals-winners"
       requirements:
         interface:
-          protocol: s3
-          dataformat: csv
+          protocol: rest
     - dataSetID: "fybrik-notebook-sample/bank"
       requirements:
         interface:
-          protocol: s3
-          dataformat: csv
+          protocol: rest
