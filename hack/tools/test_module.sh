@@ -5,24 +5,28 @@
 set -x
 set -e
 
-echo $1
-
 source ./common.sh
 
 export WORKING_DIR=test-script
 export ACCESS_KEY=1234
 export SECRET_KEY=1234
 
-if [ $1 == "kind19" ]
+# usage: <kubernetes version> <fybrik version> <module version>
+
+kubernetesVersion=$1
+fybrikVersion=$2
+moduleVersion=$3
+
+if [ $kubernetesVersion == "kind19" ]
 then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.19.11@sha256:07db187ae84b4b7de440a73886f008cf903fcf5764ba8106a9fd5243d6f32729
 
-elif [ $1 == "kind21" ]
+elif [ $kubernetesVersion == "kind21" ]
 then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.21.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6
-elif [ $1 == "kind22" ]
+elif [ $kubernetesVersion == "kind22" ]
 then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.22.0@sha256:b8bda84bb3a190e6e028b1760d277454a72267a5454b57db34437c34a588d047
@@ -46,7 +50,7 @@ bin/helm install cert-manager jetstack/cert-manager \
     --set installCRDs=true \
     --wait --timeout 220s
 
-# if [ $2 == "dev" ]
+# if [ $fybrikVersion == "dev" ]
 # then
 #     cd ${PATH_TO_LOCAL_FYBRIK}
 #     bin/helm dependency update charts/vault
@@ -67,14 +71,14 @@ bin/helm install cert-manager jetstack/cert-manager \
 
 
 
-bin/helm install fybrik-crd fybrik-charts/fybrik-crd -n fybrik-system --version v$2 --wait
-bin/helm install fybrik fybrik-charts/fybrik -n fybrik-system --version v$2 --wait
+bin/helm install fybrik-crd fybrik-charts/fybrik-crd -n fybrik-system --version v$fybrikVersion --wait
+bin/helm install fybrik fybrik-charts/fybrik -n fybrik-system --version v$fybrikVersion --wait
 
 kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
 
 sleep 10
 
-kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
+kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$moduleVersion/hello-world-read-module.yaml -n fybrik-system
 
 # cd ${PATH_TO_LOCAL_FYBRIK}
 # bin/helm install fybrik-crd charts/fybrik-crd -n fybrik-system --wait
@@ -91,13 +95,13 @@ kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/down
 kubectl create namespace fybrik-notebook-sample
 kubectl config set-context --current --namespace=fybrik-notebook-sample
 
-kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/assetMedals.yaml -n fybrik-notebook-sample
-kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/secretMedals.yaml -n fybrik-notebook-sample
-kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/assetBank.yaml -n fybrik-notebook-sample
-kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/secretBank.yaml -n fybrik-notebook-sample
+kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/sample_assets/assetMedals.yaml -n fybrik-notebook-sample
+kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/sample_assets/secretMedals.yaml -n fybrik-notebook-sample
+kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/sample_assets/assetBank.yaml -n fybrik-notebook-sample
+kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/sample_assets/secretBank.yaml -n fybrik-notebook-sample
 
 
-kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR/sample-policy-$3.rego
+kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR/sample-policy-$moduleVersion.rego
 kubectl -n fybrik-system label configmap sample-policy openpolicyagent.org/policy=rego
 # while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; sleep 5; done --timeout=120s
 c=0
@@ -111,7 +115,7 @@ done
 # timeout 5 bash -c -- 'while true; do printf ".";done'
 
 
-kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/fybrikapplication.yaml -n default
+kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/fybrikapplication.yaml -n default
 
 c=0
 while [[ $(kubectl get fybrikapplication my-notebook -n default -o 'jsonpath={.status.ready}') != "true" ]]
@@ -127,7 +131,7 @@ POD_NAME=$(kubectl get pods -n fybrik-blueprints -o=name | sed "s/^.\{4\}//")
 
 kubectl logs ${POD_NAME} -n fybrik-blueprints > res.out
 
-DIFF=$(diff $WORKING_DIR/expected-$3.txt res.out)
+DIFF=$(diff $WORKING_DIR/expected-$moduleVersion.txt res.out)
 if [ "${DIFF}" == "" ]
 then
     echo "test succeeded"
