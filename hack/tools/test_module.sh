@@ -68,7 +68,7 @@ bin/helm install fybrik fybrik-charts/fybrik -n fybrik-system --version v$2 --wa
 
 kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
 
-sleep 3s
+sleep 10
 
 kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
 
@@ -105,12 +105,8 @@ while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata
 
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/fybrikapplication.yaml -n default
 
-while [[ $(kubectl get fybrikapplication my-notebook -n default -o 'jsonpath={.status.ready}') != "true" ]]
-do
-    echo "waiting"
-    ((c++)) && ((c==30)) && break
-    sleep 6
-done
+while [[ $(kubectl get fybrikapplication my-notebook -o 'jsonpath={.status.ready}') != "true" ]]; do echo "waiting for FybrikApplication" && sleep 5; done
+while [[ $(kubectl get fybrikapplication my-notebook -o 'jsonpath={.status.assetStates.fybrik-notebook-sample/paysim-csv.conditions[?(@.type == "Ready")].status}') != "True" ]]; do echo "waiting for fybrik-notebook-sample/paysim-csv asset" && sleep 5; done
 
 
 kubectl get pods -n fybrik-blueprints
