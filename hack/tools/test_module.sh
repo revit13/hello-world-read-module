@@ -19,19 +19,21 @@ then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.19.11
 
-else
+elif [ $1 == "kind21" ]
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.21.1
+else
+    echo "Unsupported kind version"
+    exit 1
 fi
 
 
 #quick start
 
-bin/helm repo add jetstack https://charts.jetstack.io
-bin/helm repo add hashicorp https://bin/helm.releases.hashicorp.com
-bin/helm repo add fybrik-charts https://fybrik.github.io/charts
-bin/helm repo update
-
+helm repo add jetstack https://charts.jetstack.io
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo add fybrik-charts https://fybrik.github.io/charts
+helm repo update
 
 bin/helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
