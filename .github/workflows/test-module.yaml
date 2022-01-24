@@ -17,9 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install tools
+      run: make install-tools
     - name: Testing
       run: |
-        make install-tools
         kubectl cluster-info
         kubectl get pods -n kube-system
         echo "current-context:" $(kubectl config current-context)
