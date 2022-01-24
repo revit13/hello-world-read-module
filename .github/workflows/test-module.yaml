@@ -27,5 +27,5 @@ jobs:
     - name: Install tools
       run: make install-tools
     - name: run-test
-      run: ./hack/tools/test_module.sh ${{ github.event.inputs.kind-version }} ${{ github.event.inputs.fybrik-version }} ${{ github.event.inputs.module-version }}
+      run: pushd fybrik-repo/hack/tools && ./hack/tools/test_module.sh ${{ github.event.inputs.kind-version }} ${{ github.event.inputs.fybrik-version }} ${{ github.event.inputs.module-version }} && popd
 
