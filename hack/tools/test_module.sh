@@ -9,7 +9,6 @@ echo $1
 
 source ./common.sh
 
-export PATH_TO_LOCAL_FYBRIK=/home/mohammadtn/data-movement-operator/fybrik
 export WORKING_DIR=test-script
 export ACCESS_KEY=1234
 export SECRET_KEY=1234
@@ -78,13 +77,13 @@ kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
 # kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/main/hello-world-read-module.yaml -n fybrik-system
 
 
-kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
-
-
 # Notebook sample
 
 kubectl create namespace fybrik-notebook-sample
 kubectl config set-context --current --namespace=fybrik-notebook-sample
+
+kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
+
 
 
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/assetMedals.yaml -n fybrik-notebook-sample
@@ -123,7 +122,7 @@ POD_NAME=$(kubectl get pods -n fybrik-blueprints -o=name | sed "s/^.\{4\}//")
 
 kubectl logs ${POD_NAME} -n fybrik-blueprints > res.out
 
-DIFF=$(diff $WORKING_DIR/expected.txt res.out)
+DIFF=$(diff $WORKING_DIR/expected-0.6.0.txt res.out)
 if [ "${DIFF}" == "" ]
 then
     echo "test succeeded"
