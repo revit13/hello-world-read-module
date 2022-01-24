@@ -62,10 +62,15 @@ bin/helm install cert-manager jetstack/cert-manager \
 
 
 
+
 bin/helm install fybrik-crd fybrik-charts/fybrik-crd -n fybrik-system --version v$2 --wait
 bin/helm install fybrik fybrik-charts/fybrik -n fybrik-system --version v$2 --wait
 
 kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
+
+sleep 3s
+
+kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
 
 # cd ${PATH_TO_LOCAL_FYBRIK}
 # bin/helm install fybrik-crd charts/fybrik-crd -n fybrik-system --wait
@@ -82,10 +87,6 @@ kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
 kubectl create namespace fybrik-notebook-sample
 kubectl config set-context --current --namespace=fybrik-notebook-sample
 
-kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$3/hello-world-read-module.yaml -n fybrik-system
-
-
-
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/assetMedals.yaml -n fybrik-notebook-sample
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/secretMedals.yaml -n fybrik-notebook-sample
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/sample_assets/assetBank.yaml -n fybrik-notebook-sample
@@ -96,12 +97,8 @@ kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR
 kubectl -n fybrik-system label configmap sample-policy openpolicyagent.org/policy=rego
 # while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; sleep 5; done --timeout=120s
 
-while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]
-do
-    echo "waiting"
-    ((c++)) && ((c==25)) && break
-    sleep 5
-done
+while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; do echo "waiting for policy to be applied" && sleep 5; done
+
 
 # timeout 5 bash -c -- 'while true; do printf ".";done'
 
@@ -122,7 +119,7 @@ POD_NAME=$(kubectl get pods -n fybrik-blueprints -o=name | sed "s/^.\{4\}//")
 
 kubectl logs ${POD_NAME} -n fybrik-blueprints > res.out
 
-DIFF=$(diff $WORKING_DIR/expected-0.6.0.txt res.out)
+DIFF=$(diff $WORKING_DIR/expected-$3.txt res.out)
 if [ "${DIFF}" == "" ]
 then
     echo "test succeeded"
