@@ -20,6 +20,7 @@ then
     bin/kind create cluster --image=kindest/node:v1.19.11
 
 elif [ $1 == "kind21" ]
+then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.21.1
 else
