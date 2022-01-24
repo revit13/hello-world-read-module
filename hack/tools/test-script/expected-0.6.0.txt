@@ -23,4 +23,3 @@ INFO:root:    action: Redact
 INFO:root:    transferred_columns: ['age']
 
 INFO:root:Starting httpd server on localhost:8000
-
