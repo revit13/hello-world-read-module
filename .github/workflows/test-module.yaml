@@ -5,6 +5,9 @@ on:
       kind-version:
         required: true
         default: 'kind19'
+        options: 
+        - 'kind19'
+        - 'kind21'
       fybrik-version:
         required: true
         default: '0.6.0'
