@@ -102,7 +102,7 @@ Here is an example how to deploy and test the module on a single cluster.
 
 ### Before you begin
 
-Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide. This sample assumes the use of the built-in catalog, Open Policy Agent (OPA) and flight module.
+Install Fybrik using the [Quick Start](https://fybrik.io/dev/get-started/quickstart/) guide. This sample assumes the use of the built-in catalog and Open Policy Agent (OPA).
 
 > ***Notice: Please follow `version compatbility matrix` section above for deploying the correct version of Fybrik and this module.***
 
