@@ -100,16 +100,26 @@ kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-modul
 kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR/sample-policy-$3.rego
 kubectl -n fybrik-system label configmap sample-policy openpolicyagent.org/policy=rego
 # while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; sleep 5; done --timeout=120s
-
-while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; do echo "waiting for policy to be applied" && sleep 5; done
-
+c=0
+while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]
+do
+    echo "waiting"
+    ((c++)) && ((c==25)) && break
+    sleep 5
+done
 
 # timeout 5 bash -c -- 'while true; do printf ".";done'
 
 
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$3/fybrikapplication.yaml -n default
 
-while [[ $(kubectl get fybrikapplication my-notebook -n default -o 'jsonpath={.status.ready}') != "true" ]]; do echo "waiting for FybrikApplication" && sleep 5; done
+c=0
+while [[ $(kubectl get fybrikapplication my-notebook -n default -o 'jsonpath={.status.ready}') != "true" ]]
+do
+    echo "waiting"
+    ((c++)) && ((c==30)) && break
+    sleep 6
+done
 
 kubectl get pods -n fybrik-blueprints
 
