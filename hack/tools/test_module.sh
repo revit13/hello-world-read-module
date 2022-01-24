@@ -17,11 +17,11 @@ export SECRET_KEY=1234
 if [ $1 == "kind19" ]
 then
     bin/kind delete cluster
-    bin/kind create cluster --image=bin/kindest/node:v1.19.11
+    bin/kind create cluster --image=kindest/node:v1.19.11
 
 else
     bin/kind delete cluster
-    bin/kind create cluster --image=bin/kindest/node:v1.21.1
+    bin/kind create cluster --image=kindest/node:v1.21.1
 fi
 
 
