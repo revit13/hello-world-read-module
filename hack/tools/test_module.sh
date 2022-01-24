@@ -22,6 +22,10 @@ elif [ $1 == "kind21" ]
 then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.21.1
+elif [ $1 == "kind22" ]
+then
+    bin/kind delete cluster
+    bin/kind create cluster --image=kindest/node:v1.22.1
 else
     echo "Unsupported kind version"
     exit 1
