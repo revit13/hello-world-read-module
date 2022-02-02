@@ -16,12 +16,20 @@ export SECRET_KEY=1234
 kubernetesVersion=$1
 fybrikVersion=$2
 moduleVersion=$3
+certManagerVersion=$4
+
+# Trim the last two charts of the module version
+# to construct the module resource path
+moduleResourceVersion=${moduleVersion%??}".0"
 
 if [ $kubernetesVersion == "kind19" ]
 then
     bin/kind delete cluster
     bin/kind create cluster --image=kindest/node:v1.19.11@sha256:07db187ae84b4b7de440a73886f008cf903fcf5764ba8106a9fd5243d6f32729
-
+elif [ $kubernetesVersion == "kind20" ]
+then
+    bin/kind delete cluster
+    bin/kind create cluster --image=kindest/node:v1.20.7@sha256:cbeaf907fc78ac97ce7b625e4bf0de16e3ea725daf6b04f930bd14c67c671ff9
 elif [ $kubernetesVersion == "kind21" ]
 then
     bin/kind delete cluster
@@ -44,22 +52,12 @@ helm repo add fybrik-charts https://fybrik.github.io/charts
 helm repo update
 
 # https://cert-manager.io/docs/installation/supported-releases/
-if [ $kubernetesVersion == "kind22" ]
-then
 helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
-    --version v1.6.0 \
+    --version v$certManagerVersion \
     --create-namespace \
     --set installCRDs=true \
     --wait --timeout 220s
-else
-helm install cert-manager jetstack/cert-manager \
-    --namespace cert-manager \
-    --version v1.2.0 \
-    --create-namespace \
-    --set installCRDs=true \
-    --wait --timeout 220s
-fi
 
 # if [ $fybrikVersion == "dev" ]
 # then
@@ -112,7 +110,7 @@ kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-modul
 kubectl apply -f https://raw.githubusercontent.com/fybrik/hello-world-read-module/releases/$moduleVersion/sample_assets/secretBank.yaml -n fybrik-notebook-sample
 
 
-kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR/sample-policy-$moduleVersion.rego
+kubectl -n fybrik-system create configmap sample-policy --from-file=$WORKING_DIR/sample-policy-$moduleResourceVersion.rego
 kubectl -n fybrik-system label configmap sample-policy openpolicyagent.org/policy=rego
 # while [[ $(kubectl get cm sample-policy -n fybrik-system -o 'jsonpath={.metadata.annotations.openpolicyagent\.org/policy-status}') != '{"status":"ok"}' ]]; sleep 5; done --timeout=120s
 c=0
@@ -142,7 +140,7 @@ POD_NAME=$(kubectl get pods -n fybrik-blueprints -o=name | sed "s/^.\{4\}//")
 
 kubectl logs ${POD_NAME} -n fybrik-blueprints > res.out
 
-DIFF=$(diff $WORKING_DIR/expected-$moduleVersion.txt res.out)
+DIFF=$(diff $WORKING_DIR/expected-$moduleResourceVersion.txt res.out)
 if [ "${DIFF}" == "" ]
 then
     echo "test succeeded"
