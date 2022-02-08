@@ -72,9 +72,21 @@ bin/helm install fybrik fybrik-charts/fybrik -n fybrik-system --version v$fybrik
 
 bin/kubectl wait --for=condition=ready --all pod -n fybrik-system --timeout=220s
 
-sleep 10
+# Related to https://github.com/cert-manager/cert-manager/issues/2908
+# Fybrik webhook not really ready after "helm install --wait"
+# A workaround is to loop until the module is applied as expected
+CMD="bin/kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$moduleVersion/hello-world-read-module.yaml -n fybrik-system"
+count=0
+until $CMD
+do
+  if [[ $count -eq 10 ]]
+  then
+    break
+  fi
+  sleep 1
+  ((count=count+1))
+done
 
-bin/kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/download/v$moduleVersion/hello-world-read-module.yaml -n fybrik-system
 
 # Notebook sample
 
