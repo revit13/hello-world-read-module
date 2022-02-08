@@ -126,9 +126,19 @@ POD_NAME=$(bin/kubectl get pods -n fybrik-blueprints -o=name | sed "s/^.\{4\}//"
 bin/kubectl logs ${POD_NAME} -n fybrik-blueprints > res.out
 
 DIFF=$(diff $WORKING_DIR/expected-$moduleResourceVersion.txt res.out)
+RES=0
 if [ "${DIFF}" == "" ]
 then
     echo "test succeeded"
 else
-    echo "test failed"
+    RES=1
+fi
+
+bin/kubectl delete namespace fybrik-notebook-sample
+bin/kubectl -n fybrik-system delete configmap sample-policy
+
+if [ ${RES} == 1 ]
+then
+  echo "test failed"
+  exit 1
 fi
