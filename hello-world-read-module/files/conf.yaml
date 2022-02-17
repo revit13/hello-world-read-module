@@ -11,35 +11,7 @@ data:
         endpoint_url: {{if not (contains "://" .source.connection.s3.endpoint)}}https://{{end}}{{ .source.connection.s3.endpoint }}
     {{- end }}
     {{- if .transformations }}
-    transformations:
-    {{- $redactColumns := list -}}
-    {{- $removeColumns := list -}}
-    {{- range .transformations -}}
-      {{- if eq .name "RedactAction" -}}
-        {{- $redactColumns = .RedactAction.columns -}}
-      {{- end -}}
-      {{- if eq .name "RemoveAction" -}}
-        {{- $removeColumns = .RemoveAction.columns -}}
-      {{- end -}}
-    {{- end -}}
-    {{- if $redactColumns }}
-      - action: "Redact"
-        description: "redacting columns: {{ $redactColumns }}"
-        columns: 
-          {{- range $redactColumns}}
-          - {{ . }}
-          {{- end }}
-        options:
-          redactValue: "XXXXX"
-    {{- end }}
-    {{- if $removeColumns }}
-      - action: "RemoveColumns"
-        description: "removing columns: {{ $removeColumns }}"
-        columns: 
-          {{- range $removeColumns}}
-          - {{ . }}
-          {{- end }}
-    {{- end }}
+    transformations: {{ .transformations | toJson | b64enc | quote }}
     {{- end }}
 {{- end -}}
 {{- else -}}

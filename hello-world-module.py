@@ -5,6 +5,7 @@ import os
 import yaml
 import urllib.request
 import csv
+import base64
 
 import argparse
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -83,10 +84,8 @@ def run(config_path=None, server_class=HTTPServer, handler_class=S, addr="localh
                     name = connectionName.split("/")[1]
                     format = data["format"]
                     endpoint_url = data["connection"]["s3"]["endpoint_url"]
-                    transformations = data["transformations"][0]
-                    action = transformations['action']
-                    transferred_columns = transformations['columns']
-                    data_dict[name] = {'format':format, 'endpoint_url':endpoint_url, 'action':action, 'transferred_columns':transferred_columns}
+                    transformations = base64.b64decode(data["transformations"])
+                    data_dict[name] = {'format':format, 'endpoint_url':endpoint_url, 'transformations':transformations}
                     
     logging.info("The available datasets:\n")
     for key in data_dict:

@@ -18,21 +18,34 @@ imagePullSecrets: []
 
 # Action (copy/read)
 read:
-- assetID: "test1"
+- assetID: "fybrik-notebook-sample/paysim-csv"
   # Read source
   source:
     connection:
       name: s3
       s3:
-        bucket: 
-        endpoint: 
-        object_key: 
-      type: 2
-    credentialLocation: 
-    format: parquet
-  actions:
-    id: "redact-ID"
-    level: 2  # column
+        bucket: demo
+        endpoint: http://localstack.fybrik-notebook-sample.svc.cluster.local:4566
+        object_key: PS_20174392719_1491204439457_log.csv
+    format: csv
+    vault:
+      read:
+        address: http://vault.fybrik-system:8200
+        authPath: /v1/auth/kubernetes/login
+        role: module
+        secretPath: /v1/kubernetes-secrets/paysim-csv?namespace=fybrik-notebook-sample
+  transformations:
+  - name: RedactAction
+    RedactAction:
+      columns:
+      - col1
+      - col2
+  - name: RemoveAction
+    RemoveAction:
+      columns:
+      - col1
+      - col2
+
     
 nameOverride: ""
 fullnameOverride: ""

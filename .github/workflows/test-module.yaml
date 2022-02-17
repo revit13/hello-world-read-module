@@ -14,6 +14,10 @@ on:
       cert-manager-version:
         required: true
         default: '1.6.2'
+      expected-output-version:
+        required: true
+        default: '0.6.1'
+
 
 
 env:
@@ -31,4 +35,4 @@ jobs:
     - name: Install tools
       run: make install-tools
     - name: run-test
-      run: pushd hack/tools && ./test_module.sh ${{ github.event.inputs.kind-version }} ${{ github.event.inputs.fybrik-version }} ${{ github.event.inputs.module-version }} ${{ github.event.inputs.cert-manager-version }} && popd
+      run: pushd hack/tools && ./test_module.sh ${{ github.event.inputs.kind-version }} ${{ github.event.inputs.fybrik-version }} ${{ github.event.inputs.module-version }} ${{ github.event.inputs.cert-manager-version }} ${{ github.event.inputs.expected-output-version }} && popd
