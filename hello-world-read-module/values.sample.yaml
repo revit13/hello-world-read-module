@@ -17,7 +17,7 @@ image:
 imagePullSecrets: []
 
 # Action (copy/read)
-read:
+assets:
 - assetID: "fybrik-notebook-sample/paysim-csv"
   # Read source
   source:

@@ -1,6 +1,6 @@
-{{- if .Values.read -}}
+{{- if .Values.assets -}}
 data:
-{{- range .Values.read }}
+{{- range .Values.assets }}
   - format: {{ .source.format }}
     name: {{ .assetID | quote }}
     {{- if .source.connection.s3 }}
