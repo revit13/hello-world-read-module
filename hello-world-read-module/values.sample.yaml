@@ -18,10 +18,9 @@ imagePullSecrets: []
 
 # Action (copy/read)
 assets:
-- assetID: "fybrik-notebook-sample/paysim-csv"
+- args:
   # Read source
-  source:
-    connection:
+  - connection:
       name: s3
       s3:
         bucket: demo
@@ -34,6 +33,7 @@ assets:
         authPath: /v1/auth/kubernetes/login
         role: module
         secretPath: /v1/kubernetes-secrets/paysim-csv?namespace=fybrik-notebook-sample
+  assetID: "fybrik-notebook-sample/paysim-csv"
   transformations:
   - name: RedactAction
     RedactAction:
