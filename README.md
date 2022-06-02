@@ -94,6 +94,7 @@ kubectl apply -f https://github.com/fybrik/hello-world-read-module/releases/late
 | ---              | ---     | ---
 | 0.5.x            | 0.5.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.5.0/hello-world-read-module.yaml`
 | 0.6.x            | 0.6.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.6.0/hello-world-read-module.yaml`
+| 0.7.x            | 0.7.x   | `https://github.com/fybrik/hello-world-read-module/releases/download/v0.7.0/hello-world-read-module.yaml`
 | master           | main    | `https://raw.githubusercontent.com/fybrik/hello-world-read-module/main/hello-world-read-module.yaml`
 
 ## Deploy and test Fybrik module

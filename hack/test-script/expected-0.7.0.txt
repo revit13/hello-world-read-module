@@ -1,0 +1,21 @@
+INFO:root:
+Hello World Read Module!
+INFO:root:The available datasets:
+
+INFO:root:dataset name: medals-winners
+
+INFO:root:    format: csv
+
+INFO:root:    endpoint_url: http://winterolympicsmedals.com/medals.csv
+
+INFO:root:    transformations: b'[{"RedactAction":{"columns":["age"]},"name":"RedactAction"}]'
+
+INFO:root:dataset name: bank
+
+INFO:root:    format: csv
+
+INFO:root:    endpoint_url: https://raw.githubusercontent.com/juliencohensolal/BankMarketing/master/rawData/bank-additional-full.csv
+
+INFO:root:    transformations: b'[{"RedactAction":{"columns":["age"]},"name":"RedactAction"}]'
+
+INFO:root:Starting httpd server on localhost:8000
