@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     # Versions are created as follows:
     # - Tags starting with v will be released as what comes after `v`. (e.g. refs/tags/v1.0 -> 1.0).
     # - Release branches will be released as the release number (e.g. refs/heads/releases/1.0 -> 1.0-rc).
