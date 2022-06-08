@@ -24,6 +24,8 @@ spec:
       annotations:
         sidecar.istio.io/inject: "true"
     spec:
+      securityContext:
+      {{- include "fybrik.processPodSecurityContext" (dict "context" . "podSecurityContext" .Values.podSecurityContext) | nindent 8 }}
       serviceAccountName: {{ include "hello-world-read-module.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
@@ -31,6 +33,8 @@ spec:
           {{- if .Values.image.pullPolicy }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- end }}
+          securityContext:
+          {{toYaml .Values.containerSecurityContext | nindent 12 }}
           ports:
             - name: grpc
               containerPort: 8080
