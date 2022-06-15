@@ -14,5 +14,6 @@ You can do that [directly from GitHub](https://docs.github.com/en/pull-requests/
 ## 2. Create a [new release](https://github.com/fybrik/hello-world-read-module/releases/new) 
 
 Use `vX.Y.Z` tag and set `releases/X.Y.Z` as the target.
+Update `spec.chart.values.image.tag` and `spec.chart.name` tags in hello-world-read-module.yaml to be `X.Y.Z` and attach it to the release.
 
 Ensure that the release notes explicitly mention upgrade instructions and any breaking change.
